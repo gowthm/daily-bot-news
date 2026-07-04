@@ -5,6 +5,8 @@ on:
     # 6:30 AM IST = 1:00 AM UTC
     - cron: "0 1 * * *"
   workflow_dispatch: {}
+  repository_dispatch:
+    types: [daily-brief]
 
 jobs:
   send-brief:
@@ -24,6 +26,7 @@ jobs:
           NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
           LLM_PROVIDER: ${{ vars.LLM_PROVIDER }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
