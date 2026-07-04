@@ -1,9 +1,6 @@
 name: Daily Market Brief
 
 on:
-  schedule:
-    # 6:30 AM IST = 1:00 AM UTC
-    - cron: "0 1 * * *"
   workflow_dispatch: {}
   repository_dispatch:
     types: [daily-brief]

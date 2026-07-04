@@ -1,6 +1,6 @@
 # daily-news-update
 
-A daily Telegram bot built for a portfolio spanning USA stocks, India stocks, Gold, Silver, Bitcoin, and Bonds. It fetches world, India, USA economy/dollar, oil, gold, and AI news, plus market data (Nifty, Sensex, S&P 500, Nasdaq 100, gold, silver, crude, USD/INR, Bitcoin, US 10Y Treasury yield, global spot gold & silver), asks an LLM to turn it all into a structured morning briefing with a "don't miss this" highlights section and a per-asset investment outlook, and sends it to Telegram. Runs on a GitHub Actions cron schedule — no server to keep running.
+A daily Telegram bot built for a portfolio spanning USA stocks, India stocks, Gold, Silver, Bitcoin, and Bonds. It fetches world, India, USA economy/dollar, oil, gold, and AI news, plus market data (Nifty, Sensex, S&P 500, Nasdaq 100, gold, silver, crude, USD/INR, Bitcoin, US 10Y Treasury yield, global spot gold & silver), asks an LLM to turn it all into a structured morning briefing with a "don't miss this" highlights section and a per-asset investment outlook, and sends it to Telegram. Runs as a GitHub Actions job, triggered by an external cron job — no server to keep running.
 
 ## Architecture
 
@@ -9,7 +9,7 @@ A daily Telegram bot built for a portfolio spanning USA stocks, India stocks, Go
 - `src/analysis.py` — sends news + market data to an LLM and gets back a formatted briefing. Supports either Anthropic (`claude-sonnet-5` by default, override with `ANTHROPIC_MODEL`) or Groq, switchable via `LLM_PROVIDER`
 - `src/telegram_bot.py` — sends the briefing to Telegram (Markdown-formatted, with a plain-text fallback if parsing fails), splitting on the 4096-char message limit
 - `main.py` — orchestrates the pipeline; this is what the scheduled job runs
-- `.github/workflows/daily-brief.yml` — GitHub Actions workflow, fires daily at 6:30 AM IST
+- `.github/workflows/daily-brief.yml` — GitHub Actions workflow, triggered by an external cron job around 7:00 AM IST (via `repository_dispatch`), or manually (`workflow_dispatch`)
 
 ## Briefing sections
 
@@ -44,11 +44,12 @@ Message [@BotFather](https://t.me/BotFather) on Telegram, run `/newbot`, and sav
 **For GitHub Actions (recommended):** in the repo settings, add these under *Settings → Secrets and variables → Actions*:
 
 - `NEWSAPI_KEY`
-- `ANTHROPIC_API_KEY` (or `GROQ_API_KEY` + a `LLM_PROVIDER=groq` repo variable, if testing with Groq)
+- `ANTHROPIC_API_KEY` (or `GROQ_API_KEY` + `LLM_PROVIDER=groq`, if testing with Groq)
+- `ANTHROPIC_MODEL` (optional, e.g. `claude-haiku-4-5` for lower cost)
 - `BOT_TOKEN`
 - `CHAT_ID`
 
-The workflow at `.github/workflows/daily-brief.yml` runs automatically every day at 6:30 AM IST, and can also be triggered manually from the Actions tab (`workflow_dispatch`).
+This workflow has no built-in schedule — it's triggered by your external cron job hitting the GitHub API (`repository_dispatch`, event type `daily-brief`), targeted for ~7:00 AM IST. It can also be triggered manually from the Actions tab (`workflow_dispatch`).
 
 **For local testing:** copy `.env.example` to `.env` and fill in the same values. `.env` is gitignored — never put real secrets in `.env.example`, since that file is committed.
 
