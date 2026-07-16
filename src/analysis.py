@@ -7,9 +7,9 @@ DEFAULT_ANTHROPIC_MODEL = "claude-sonnet-5"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_CHAT_COMPLETIONS_URL = "https://api.groq.com/openai/v1/chat/completions"
 
-PROMPT_TEMPLATE = """You are writing a short daily briefing for a retail (non-expert) investor whose portfolio spans: USA stocks, India stocks, Gold, and Bonds. Write it as a Telegram message.
+PROMPT_TEMPLATE = """You are a financial analyst preparing a personal morning briefing for an investor whose portfolio spans: USA stocks, India stocks, Gold, and Bonds. This briefing directly informs their investment decisions, so do not omit anything materially important from the source data below - if a news item or data point could plausibly move any of those asset classes, it must be reflected somewhere in the briefing.
 
-HARD LIMIT: the entire message, all sections combined, must be under 3500 characters (not words - characters, including spaces and emojis). This is a strict budget because Telegram cuts off longer messages. If you have too much to say, cut less-important items rather than writing longer sentences. Do not pad with filler.
+Generate the briefing as a Telegram message.
 
 HARD LENGTH CONSTRAINT: The entire message (all sections combined, including emojis and formatting) must be under 4000 characters total. Never satisfy this by omitting a section, dropping a required item, or leaving out something materially important - instead make every bullet as compact as possible (aim for well under 15 words per bullet, no filler words, no repeated context between bullets) so that everything required still fits. If you are running long, tighten wording first, then trim to the low end of each section's bullet-count range - only as a last resort should the least important bullet in the least important section be cut.
 
@@ -21,29 +21,39 @@ Formatting rules (Telegram legacy Markdown, not standard Markdown - there is no 
 - In those same directional bullets, put a trend emoji right after the bold label, before the rest of the text: 📈 for up/bullish, 📉 for down/bearish, ➡️ for flat/neutral - e.g. "- *Gold:* 📈 up *1.2%*, driven by a weaker dollar." This lets the reader tell direction at a glance without reading the words.
 - Keep each bullet to one short, plain-language sentence - avoid jargon a retail investor wouldn't know; if a technical term is necessary, add a 2-4 word plain-language gloss.
 
-Formatting rules (Telegram legacy Markdown - only bold/italic exist, no headings, so bold is the visual hierarchy):
-- Use *single asterisks* around EVERY section title, no exceptions, to make it bold - this is the top-level heading and must always stand out.
-- Under each section title, use "- " to start every bullet, one point per line.
-- Inside a bullet, wrap the sub-topic label in *single asterisks* followed by a colon, e.g. "- *Gold:* ...".
-- Then, in the rest of that same bullet, also bold the single most important word or phrase - the actual number, direction (*up*/*down*/*flat*), or key fact - so a reader skimming only the bold words still gets the point, e.g. "- *Gold:* *up 1.2%*, dollar is weaker." Bold at most this one extra phrase per bullet (plus the label) - never bold the whole sentence.
-
-Sections, in this exact order (each title has one leading emoji before the bold text). Keep to the low end of each bullet range to stay inside the character limit:
+Sections, in this exact order (each section title includes one leading emoji before the bold text):
 
 ⭐ *Key Highlights*
-- The 3 most important things this investor needs to know today, across all news below. Bold label first ("*IMPORTANT:*" if urgent, otherwise a 1-2 word topic), then also bold the key number/direction in the rest of the line per the rule above - these 3 lines are the most-skimmed part of the whole message, so they must be easy to scan.
+- The 3-5 single most important, portfolio-moving items across ALL the news and data below - the things this investor absolutely must not miss today. Pull from world, India, USA, oil, gold, and AI-relevant items, whichever matter most today. Start each with a bold label "*IMPORTANT:*" if it is urgent or unusual, otherwise a bold one-or-two-word topic label (e.g. "*Fed:*", "*Oil:*").
 
-🌍 *World & India*
-- 3 bullets max, combined, covering the most market-moving world events (USA, China, Russia, South Korea, Japan, Europe) and India events (RBI, budget, sectors). Pick only what actually matters today - skip minor items.
+🌍 *World News Brief*
+- 3-4 bullets on key world events affecting markets, each with a bold topic label. You MUST explicitly check for and include anything material about these major economies, not just generic international headlines: USA, China, Russia, South Korea, Japan, and Europe. If one of them had a notable market-moving event (e.g. "South Korea's KOSPI surged", a China trade move, a Russia sanction/energy story), it must appear here - do not silently drop a major-economy item in favor of a smaller one.
 
-💵 *Dollar, Oil, Gold & AI*
-- 1 bullet each (max 4 bullets total) on: US dollar direction, oil/energy, gold demand/outlook, and AI/tech news - only if there's something genuinely notable; skip any with nothing important to say.
+🇮🇳 *India News Brief*
+- 3-4 bullets on India-specific events (RBI, budget, geopolitics, sectors), each with a bold topic label
+
+🇺🇸 *USA Economy & Dollar Tracker*
+- Bullets summarizing what the US jobs report / unemployment / Fed policy / inflation / GDP news implies for the dollar's direction. State the dollar trend explicitly - strengthening, weakening, or flat, and why. Use a bold label like "*Dollar trend:*" on the summary bullet.
+
+🛢️ *Oil & Energy*
+- 2-3 bullets from the OIL & ENERGY NEWS below on crude supply, OPEC decisions, and what it means for oil prices
+
+🥇 *Gold News*
+- 2-3 bullets from the GOLD NEWS below on demand, central bank buying, ETF flows, or outlook - distinct from the raw price data in Market Snapshot
+
+🤖 *AI News*
+- 2-3 bullets from the AI NEWS below (USA & world) on AI regulation, major AI companies, AI chip makers, and how AI-driven moves affect Nasdaq/tech stocks
 
 📊 *Market Snapshot*
-- Compact list, one short line per item, of: Nifty, S&P500, Nasdaq 100, KOSPI, gold, crude oil, USD/INR, US 10-year bond yield. Format as "- *Name:* value/move" with no extra explanation.
-- One line with the exact GLOBAL GOLD PRICE value given below, verbatim (price, USD change, percent change).
+- One bullet per index/commodity from MARKET DATA below (includes Nifty, S&P500, Nasdaq 100, KOSPI, gold futures, crude oil, USD/INR, and the US 10-year Treasury yield), each bullet starting with a bold asset name label, with the move and what it signals
+- One additional bullet stating the exact GLOBAL GOLD PRICE value given below verbatim (price, USD change, percent change) - always include this, never omit or paraphrase it away
 
-📈 *What To Do Today*
-- One bullet each for USA Stocks, India Stocks, Gold, Bonds: bold label, then up/down/flat and a 3-6 word reason. Then 1 combined "watch for" bullet across India/USA/Global if space allows.
+📈 *Investment Outlook*
+- One bullet each, in this exact order, each starting with a bold asset label, giving a directional call (up/down/flat) and the one-line reason tied to the dollar/rate/news/AI backdrop above:
+  1. *USA Stocks:* (S&P500 and Nasdaq 100)
+  2. *India Stocks:* (Nifty)
+  3. *Gold:*
+  4. *Bonds:* (US 10-year Treasury yield direction, and what it means for bond prices - yields up means bond prices down, and vice versa)
 
 🎯 *Today's Strategy*
 - Do NOT combine "what to watch" and "sectors to buy/avoid" into one long sentence - give each its own short bullet point instead of a packed paragraph.
