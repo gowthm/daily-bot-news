@@ -13,16 +13,13 @@ A daily Telegram bot built for a portfolio spanning USA stocks, India stocks, Go
 
 ## Briefing sections
 
-1. **Key Highlights** — the 3-5 most important, portfolio-moving items across everything below, flagged if urgent
-2. World News Brief
-3. India News Brief
-4. USA Economy & Dollar Tracker (jobs report, Fed policy, inflation, dollar direction)
-5. Oil & Energy
-6. Gold News (demand, central bank buying, ETF flows — distinct from raw price data)
-7. AI News (regulation, chipmakers, major AI companies, Nasdaq/tech impact)
-8. Market Snapshot (Nifty, Sensex, S&P 500, Nasdaq 100, gold & silver futures, crude, USD/INR, Bitcoin, US 10Y Treasury yield, plus the goldprice.org spot gold & silver line)
-9. **Investment Outlook** — a directional call (up/down/flat) for each of: USA stocks, India stocks, Gold, Silver, Bitcoin, Bonds
-10. Today's Strategy
+Kept short on purpose — simple wording for a retail investor, and a strict ~3500-character budget so the whole briefing fits in a single Telegram message instead of being split.
+
+1. **Key Highlights** — the 3 most important items across everything below, flagged if urgent
+2. World & India — combined, most market-moving items only
+3. Dollar, Oil, Gold & AI — one line each, only if genuinely notable
+4. Market Snapshot (Nifty, S&P 500, Nasdaq 100, KOSPI, gold, crude, USD/INR, US 10Y Treasury yield, plus the goldprice.org spot gold line)
+5. **What To Do Today** — a directional call (up/down/flat) for USA stocks, India stocks, Gold, Bonds, plus what to watch for
 
 Formatting is Telegram legacy Markdown: section titles are bold, and within bullets a bold sub-label (e.g. `*Gold:*`) precedes the detail — Telegram has no font-size/heading levels, so bold is the only available visual hierarchy.
 
