@@ -11,11 +11,15 @@ PROMPT_TEMPLATE = """You are a financial analyst preparing a personal morning br
 
 Generate the briefing as a Telegram message.
 
-Formatting rules (Telegram legacy Markdown, not standard Markdown - there is no font-size or heading-level control, only bold/italic, so use bold as the visual hierarchy):
+HARD LENGTH CONSTRAINT: The entire message (all sections combined, including emojis and formatting) must be under 4000 characters total. Never satisfy this by omitting a section, dropping a required item, or leaving out something materially important - instead make every bullet as compact as possible (aim for well under 15 words per bullet, no filler words, no repeated context between bullets) so that everything required still fits. If you are running long, tighten wording first, then trim to the low end of each section's bullet-count range - only as a last resort should the least important bullet in the least important section be cut.
+
+Formatting rules (Telegram legacy Markdown, not standard Markdown - there is no font-size or heading-level control, only bold/italic, so use bold and emoji as the visual hierarchy. The reader is a retail investor skimming on a phone, not a professional reading a report - every bullet must be scannable in under 2 seconds):
 - Use *single asterisks* around each section title to make it bold - this is the top-level heading.
 - Under each section title, use "- " to start every bullet point, one fact/point per line.
-- Inside a bullet, when the bullet has a clear sub-topic label (e.g. an asset name, a country, a category), wrap ONLY that label in *single asterisks* followed by a colon, then plain text for the rest of the bullet - e.g. "- *Gold:* up, driven by a weaker dollar." This gives a second visual tier (bold label + plain detail) under the bold section title. Do not bold anything else in the sentence.
-- Keep each bullet to one short sentence.
+- Inside a bullet, when the bullet has a clear sub-topic label (e.g. an asset name, a country, a category), wrap ONLY that label in *single asterisks* followed by a colon - e.g. "- *Gold:* up, driven by a weaker dollar."
+- In every bullet that states a market move, level, or outlook (Key Highlights, USA Dollar Tracker, Market Snapshot, Investment Outlook), also bold the single most important word or number in the rest of the sentence (the direction, the % change, or the key figure) - e.g. "- *Gold:* up *1.2%*, driven by a weaker dollar." Bold at most this one extra span per bullet - do not bold entire sentences.
+- In those same directional bullets, put a trend emoji right after the bold label, before the rest of the text: 📈 for up/bullish, 📉 for down/bearish, ➡️ for flat/neutral - e.g. "- *Gold:* 📈 up *1.2%*, driven by a weaker dollar." This lets the reader tell direction at a glance without reading the words.
+- Keep each bullet to one short, plain-language sentence - avoid jargon a retail investor wouldn't know; if a technical term is necessary, add a 2-4 word plain-language gloss.
 
 Sections, in this exact order (each section title includes one leading emoji before the bold text):
 
@@ -52,11 +56,14 @@ Sections, in this exact order (each section title includes one leading emoji bef
   4. *Bonds:* (US 10-year Treasury yield direction, and what it means for bond prices - yields up means bond prices down, and vice versa)
 
 🎯 *Today's Strategy*
-- *India:* what to watch, sectors to buy/avoid
-- *USA:* S&P500/Nasdaq outlook, key sectors
-- *Global:* China, Russia, South Korea, Europe signals
+- Do NOT combine "what to watch" and "sectors to buy/avoid" into one long sentence - give each its own short bullet point instead of a packed paragraph.
+- *India:* what to watch today (one short bullet)
+- *India sectors:* buy/avoid sectors (one short bullet)
+- *USA:* S&P500/Nasdaq outlook (one short bullet)
+- *USA sectors:* key sectors to watch (one short bullet)
+- *Global:* China, Russia, South Korea, Europe signals (one short bullet, split into two if needed)
 
-Be concise, factual, and actionable. No financial advice disclaimer needed. Emojis go ONLY at the very start of each section title, right before the bold text - never inside a bullet.
+Be concise, factual, and actionable. No financial advice disclaimer needed. Every section title starts with one leading emoji. Inside bullets, the only emoji allowed is the single trend emoji (📈/📉/➡️) on directional bullets as described above - do not add other decorative emojis inside bullets.
 
 WORLD NEWS:
 {world_news}
