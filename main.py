@@ -27,13 +27,18 @@ def main() -> None:
     load_dotenv()
     print("Begin")
 
-    world_articles, india_articles, usa_articles, oil_articles, gold_articles, ai_articles = dedupe_articles(
-        fetch_world_news(),
-        fetch_india_news(),
+    # dedupe_articles keeps an article in the first list it appears in and drops
+    # it from later ones. Order the specific, targeted feeds (usa/oil/gold/ai,
+    # then india) before the generic "world" top-headlines feed, so a story
+    # never gets stripped out of the section it's actually specific to just
+    # because the broad world feed happened to fetch it too.
+    usa_articles, oil_articles, gold_articles, ai_articles, india_articles, world_articles = dedupe_articles(
         fetch_usa_economy_news(),
         fetch_oil_energy_news(),
         fetch_gold_news(),
         fetch_ai_news(),
+        fetch_india_news(),
+        fetch_world_news(),
     )
     world_news = format_articles(world_articles)
     india_news = format_articles(india_articles)
