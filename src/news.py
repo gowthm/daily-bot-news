@@ -83,6 +83,36 @@ def fetch_ai_news(page_size: int = 3) -> list[dict]:
     return _fetch_everything(AI_NEWS_QUERY, page_size)
 
 
+def _article_key(article: dict) -> str:
+    url = (article.get("url") or "").strip().lower()
+    if url:
+        return url
+    return (article.get("title") or "").strip().lower()
+
+
+def dedupe_articles(*article_lists: list[dict]) -> list[list[dict]]:
+    """Remove articles already seen in an earlier list (by url, falling back to title).
+
+    Category feeds are fetched independently, so the same story can be
+    returned by more than one query (e.g. a global top headline that also
+    matches the India feed). Keeping it in only its first category stops the
+    same story from being repeated across sections of the briefing.
+    """
+    seen: set[str] = set()
+    result = []
+    for articles in article_lists:
+        deduped = []
+        for article in articles:
+            key = _article_key(article)
+            if key:
+                if key in seen:
+                    continue
+                seen.add(key)
+            deduped.append(article)
+        result.append(deduped)
+    return result
+
+
 def format_articles(articles: list[dict]) -> str:
     lines = []
     for article in articles:

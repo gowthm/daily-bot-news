@@ -11,6 +11,7 @@ from src.market import (
     format_market_data,
 )
 from src.news import (
+    dedupe_articles,
     fetch_ai_news,
     fetch_gold_news,
     fetch_india_news,
@@ -26,12 +27,20 @@ def main() -> None:
     load_dotenv()
     print("Begin")
 
-    world_news = format_articles(fetch_world_news())
-    india_news = format_articles(fetch_india_news())
-    usa_news = format_articles(fetch_usa_economy_news())
-    oil_news = format_articles(fetch_oil_energy_news())
-    gold_news = format_articles(fetch_gold_news())
-    ai_news = format_articles(fetch_ai_news())
+    world_articles, india_articles, usa_articles, oil_articles, gold_articles, ai_articles = dedupe_articles(
+        fetch_world_news(),
+        fetch_india_news(),
+        fetch_usa_economy_news(),
+        fetch_oil_energy_news(),
+        fetch_gold_news(),
+        fetch_ai_news(),
+    )
+    world_news = format_articles(world_articles)
+    india_news = format_articles(india_articles)
+    usa_news = format_articles(usa_articles)
+    oil_news = format_articles(oil_articles)
+    gold_news = format_articles(gold_articles)
+    ai_news = format_articles(ai_articles)
     market_data = format_market_data(fetch_market_data())
 
     try:
